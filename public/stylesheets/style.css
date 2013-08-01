@@ -30,6 +30,9 @@ body {
 	border-radius: 30px;
 	cursor: pointer;
 }
+#backBtn:hover {
+	background-color: #e25527;
+}
 ul {
 	list-style: none;
 }
@@ -37,7 +40,6 @@ ul {
 	margin: 20px auto;
 	width: 1000px;
 	background-color: #f3f3ea;
-	overflow: hidden;
 }
 #main {
 	margin: 0 0 0 15px;
@@ -89,6 +91,21 @@ ul {
 	bottom: 15px;
 	right: 15px;
 }
+.linkicon img {
+	width: 12px !important;
+	height: 11px !important;
+}
+.faboStar {
+	width: 13px !important;
+	height: 12px !important;
+	position: absolute;
+	bottom: 14px;
+	right: 35px;
+}
+.faboStar img {
+	width: 13px !important;
+	height: 12px !important;
+}
 
 /* navigation */
 h1 {
@@ -123,7 +140,7 @@ h1 {
 	line-height: 14px;
 }
 #set-rss {
-	margin: 50px 0 0 20px;
+	margin: 50px 0 50px 20px;
 	width: 260px;
 	color: #666;
 }
@@ -132,6 +149,10 @@ h1 {
 	margin: 5px 0;
 }
 #add-btn {
+	width: 265px;
+}
+#fabutton {
+	margin: 20px 0 0 0;
 	width: 265px;
 }
 .delete-rss-btn {
@@ -189,5 +210,42 @@ h1 {
 #itemBox h3,
 #itemBox h4,
 #itemBox h5 {
-	margin: 10px 0;
+	margin: 30px 0 10px 0;
+}
+
+a{color:#231712;}
+a:visited{color:#999999;}
+
+/* favo */
+ul.favo-category .feed-title {
+	width: 600px;
+	height: 20px;
+}
+.favo-one {
+	font-size: 12px;
+	margin: 2px 10px 0 10px;
+	padding: 1px 10px;
+	color: #231712;
+	cursor: pointer;
+	position: relative;
+}
+.favo-caps {
+	width: 580px;
+	overflow: hidden;
+	height: 18px;
+	background-color: #f3f3ea;
+	padding: 2px 10px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border-bottom: 1px solid #dcdcdc; 
+}
+.favo-title {
+	float: left;
+}
+.favo-date{
+	float: right;
+}
+.favo-one a:visited {
+	color:#231712 !important;
 }
