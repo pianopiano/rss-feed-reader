@@ -5,6 +5,9 @@
 		var nowEntry = {};
 		var items = [];
 		var favos = [];
+		var reads = [];
+		var readItems = [];
+		var nowFeed = '';
 		
 		setNavigation();
 		addEvents();
@@ -32,6 +35,12 @@
 				var rss = $(this).attr('data-rss');
 				rssURL = '';
 				rssURL = rss.toString();
+				var domain = searchDomain(rss);
+				for (var i = 0; i < reads.length; i++ ){
+					if (reads[i][domain]!==undefined) {
+						readItems = reads[i][domain];
+					}
+				}
 				feedLoader();
 			}).on('click', '.delete-rss-btn', function(){
 				deleteRss($(this).parent('li').attr('data-rss'));
@@ -40,6 +49,13 @@
 			}).on('click', '.items', function(){
 				var index = $('.items').index(this);
 				addEntrie(nowEntry.feed.entries[index].title, nowEntry.feed.entries[index].content);
+				if ($(this).hasClass('read')) return false;
+				var url = ($(this).find('a').attr('href').toString());
+				addRead(searchDomain(url), url);
+				$(this).addClass('read');
+				if ($('.read-btn').text()==='ALL') {
+					$(this).addClass('read-hide');
+				}
 			}).on('click', '.linkicon', function(e){
 				e.preventdefault();
 			}).on('click', '.faboStar', function(){
@@ -51,14 +67,23 @@
 				addFavo($(this).parent());
 				$(this).find('img').attr('src', 'images/favo_x.png');
 				return false;
-			}).on('mouseover', '.linkicon, .faboStar', function(){
+			}).on('mouseover', '.linkicon, .faboStar, .read-btn', function(){
 				$(this).css('opacity', '0.6');
-			}).on('mouseout', '.linkicon, .faboStar', function(){
+			}).on('mouseout', '.linkicon, .faboStar, .read-btn', function(){
 				$(this).css('opacity', '1.0');
 			}).on('mouseover', '.favo-caps', function(){
 				$(this).css('background-color', '#ffffff');
 			}).on('mouseout', '.favo-caps', function(){
 				$(this).css('background-color', '#f3f3ea');
+			}).on('click', '.feed-title', function(){
+			}).on('click', '.read-btn', function(){
+				if ($('.read').hasClass('read-hide')) {
+					$(this).text('未読')
+					$('.read').removeClass('read-hide');
+				} else {
+					$(this).text('ALL');
+					$('.read').addClass('read-hide');
+				}
 			});
 			$('#backBtn').on('click', removeArticle);
 			$('#add-btn').on('click', function(){
@@ -78,14 +103,26 @@
 				});
 			});
 			$('#fabutton').on('click', function(){
-				if (favos!==null) favoBuild();
+				if (favos!==null) {
+					if (favos.length===0) {
+						$('#main').empty().append('<p style="font-size: 120px;">まだ<br /><strong>Favorite</strong><br />無いよー！</p>');
+						return false;
+					}
+					favoBuild();
+				}
 			})
 			
 		}
 		
+		function searchDomain(url) {
+			var domain = url.match(/^[httpsfile]+:\/{2,3}([0-9a-zA-Z\.\-:]+?):?[0-9]*?\//i)[1].split('.').join('');
+			nowFeed = domain;
+			return domain;
+		}
+		
 		function addFavo($elm) {
 			var favo = {
-				feed: $elm.parent('ul').prev('h3').text(),
+				feed: $elm.parent('ul').prev('h3').text().replace('ALL', '').replace('未読', ''),
 				title: $elm.find('.title').text(),
 				item: $elm.find('.item').text(),
 				date: $elm.find('.item-date').text(),
@@ -108,8 +145,9 @@
 			$(document.body).scrollTop(0).append('<div id="articleBg"></div><div id="article" class="rad15"></div>');
 			$('#backBtn').animate({'top': '6px'}, 300, 'swing')
 			$('#article').hide().css({'width': '700px','position': 'absolute','top': '0px','left': $(window).width()/2-400+'px','padding': '30px 50px','font-size': '12px','background-color': '#f3f3ea','margin': '0 0 200px 0'
-			}).html(article).fadeIn(300).find('img').css({'margin': '20px'});
+			}).html(article).fadeIn(300).find('img').css({'margin': '20px'})
 			$('#articleBg').hide().css({'position': 'absolute','top': '0','left': '0','width': $(window).width()+'px','height': $(document).height()+'px','background-color': '#f2e9de','opacity': '0.85'}).on('click', removeArticle).fadeIn(300);
+			$('#article').find('a').attr('target', '_blank');
 		}
 			
 		function removeArticle() {
@@ -186,13 +224,11 @@
 							'</li>'
 							
 				for (var j = 0;j < categorys.length; j++) {
-					
 					if (favos[i].feed==categorys[j]) {
 						$('.favo-category').eq(j).append(content);
 					}
 				}
 			}
-			//contents = ''
 			$('#main').fadeIn(500);
 		}
 
@@ -220,23 +256,41 @@
 							'</li>'
 			}
 			
-			$('#main').empty().hide().append('<div class="channel"><h3 class="feed-title">'+channelTitle+'</h3><ul>'+contents+'</ul></div>').fadeIn(500);
-			$('.feed-title').css({background: "url(http://g.etfv.co/" + entry.feed.link + ") 10px center no-repeat #fff", "padding-left": "35px"});
-			$('.channel').find('img').width(20).height(20);
-			
+			$('#main').empty().hide().append('<div class="channel"><h3 class="feed-title"><span>'+channelTitle+'</span><span class="read-btn">未読</span></h3><ul>'+contents+'</ul></div>').fadeIn(500);
+			$('.feed-title').css({background: "url(http://g.etfv.co/" + entry.feed.link + ") 15px 15px no-repeat #fff", 'background-size': '16px 16px', "padding-left": "35px"}).find('span').css({'margin': '5px 0 0 5px'});
+			//$('.channel').find('img').width(20).height(20);
+			for (var i = 0; i < $('.items').length; i++) {
+				for (var j = 0; j < readItems.length; j++) {
+					if ($('.items').eq(i).find('a').attr('href')===readItems[j]) {
+						$('.items').eq(i).addClass('read');
+					}
+				}
+			}
+			$('.read').find('img').css({'opacity': '0.5'});
 		}
 		window.onload = function(){
+			//window.localStorage.removeItem('reads');
 			//window.localStorage.removeItem('favos')
 			if (JSON.parse(window.localStorage.getItem('favos'))!==null) {
 				favos = JSON.parse(window.localStorage.getItem('favos'));
 			}
+			if (JSON.parse(window.localStorage.getItem('reads'))!==null) {
+				reads = JSON.parse(window.localStorage.getItem('reads'));
+			}
+			var domain = searchDomain($('#navigation ul li').eq(0).attr('data-rss'));
+			for (var i = 0; i < reads.length; i++ ){
+				if (reads[i][domain]!==undefined) {
+					readItems = reads[i][domain];
+				}
+			}
+		
 		}
 		function setFavi() {
 			var len = $('#navigation').find('li').length;
 			for (var i = 0; i < len; i++) {
 				var link = $('#navigation').find('li').eq(i).attr('data-rss');
 				$('#navigation').find('li').eq(i).css({
-					background: "url(http://g.etfv.co/" + link + ") 10px center no-repeat", "padding-left": "35px"
+					background: "url(http://g.etfv.co/" + link + ") 10px center no-repeat", "background-size": "16px 16px", "padding-left": "35px"
 				})
 			}
 		}
@@ -259,11 +313,14 @@
 					}
 				});
 			}
+			
 		}
 		
 		function start(contents) {
 			$('#navigation').find('ul').empty().append(contents);
 			setFavi();
+			
+			
 			rssURL = $('#navigation').find('li').eq(0).attr('data-rss');
 			google.setOnLoadCallback(feedLoader);
 		}
@@ -311,6 +368,34 @@
 			window.localStorage.setItem('favos', JSON.stringify(favos));
 		}
 		
+		function setAlreadyRead() {
+			window.localStorage.setItem('reads', JSON.stringify(reads));
+		}
+		
+		function addRead(key, readUrl) {
+			var read = readUrl
+			var flag = false;
+			var addFlag = false;
+			var target = [];
+			for (var i = 0; i < reads.length; i++) {
+				if (reads[i][key]) {
+					target = reads[i][key];
+					for (var j = 0; j < reads[i][key].length; j++) {
+						if (reads[i][key][j]===read) addFlag = true;
+					}
+					flag = true;
+				}
+			}
+			if (addFlag===false){
+				target.push(read);
+			}
+			if (flag===false) {
+				var obj = {}
+				obj[key] = [read];
+				reads.push(obj)
+			};
+			setAlreadyRead();
+		}
 	})
 
 })();
