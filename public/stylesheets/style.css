@@ -15,7 +15,7 @@ body {
 	background-color: #454545;
 	z-index: 1;
 }
-#backBtn {
+.entry-btn {
 	position: absolute;
 	top: -50px;
 	right: 0;
@@ -30,9 +30,19 @@ body {
 	border-radius: 30px;
 	cursor: pointer;
 }
-#backBtn:hover {
+#backBtn {
+	top: -50px;
+	right: 0;
+}
+#favoBtn {
+	top: -50px;
+	right: 52px;
+	display: none;
+}
+#backBtn:hover, #favoBtn:hover {
 	background-color: #e25527;
 }
+
 ul {
 	list-style: none;
 }
@@ -49,7 +59,7 @@ ul {
 	font-size: 18px;
 	width: 580px;
 	background-color: #fff;
-	margin: 12px;
+	margin: 10px 12px;
 	padding: 10px;
 	border: 1px #ddd solid;
 }
@@ -69,7 +79,7 @@ ul {
 }
 .items .title {
 	font-weight: bold;
-	margin: 8px 0 5px 0;
+	margin: 10px 0 5px 0;
 }
 .items .item {
 	margin: 0 10px;
@@ -80,7 +90,7 @@ ul {
 .item-date {
 	background-color: #fff;
 	padding: 5px 5px 1px 5px;
-	margin: 8px 0 5px 0;
+	margin: 10px 0 5px 0;
 	border: 1px #ddd solid;
 }
 .rad15 {
@@ -266,4 +276,14 @@ ul.favo-category .feed-title {
 	font-size: 10px;
 	padding: 2px 10px 0 0;
 	cursor: pointer;
+}
+.shadow-mini {
+	box-shadow: 1px 1px 2px #ccc;
+	-moz-box-shadow: 1px 1px 2px #ccc;
+	-webkit-box-shadow: 1px 1px 2px #ccc;
+}
+.shadow {
+	box-shadow: 2px 2px 10px #ddd;
+	-moz-box-shadow: 2px 2px 10px #ddd;
+	-webkit-box-shadow: 2px 2px 10px #ddd;
 }
