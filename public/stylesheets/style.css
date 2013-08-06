@@ -231,6 +231,9 @@ a{color:#231712;}
 a:visited{color:#999999;}
 
 /* favo */
+ul.favo-category {
+	cursor: pointer;
+}
 ul.favo-category .feed-title {
 	width: 600px;
 	height: 20px;
