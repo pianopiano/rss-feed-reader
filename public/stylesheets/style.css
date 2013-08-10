@@ -80,6 +80,7 @@ ul {
 .items .title {
 	font-weight: bold;
 	margin: 10px 0 5px 0;
+	line-height: 1.4em;
 }
 .items .item {
 	margin: 0 10px;
