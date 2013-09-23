@@ -8,14 +8,19 @@
 	<link rel="stylesheet" href="stylesheets/bootstrap.min.css" />
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="javascripts/Utils.js"></script>
 	<script type="text/javascript" src="javascripts/script.js"></script>
 </head>
 <body>
 	<div id="container">
 		<div id="navigation">
 			<h1><span class="rss">RSS</span> Feed Reader</h1>
-			<ul>
-			</ul>
+			<div id="navigationInner">
+				<ul id="naviLeft">
+				</ul>
+				<ul id="naviRight">
+				</ul>
+			</div>
 			<div id="addFolder"><p>ADD Folder</p>
 				<input id="folder-name" type="text">
 				<button id="add-folder-btn" class="btn">ADD</button>

@@ -137,13 +137,37 @@ h1 {
 #navigation {
 	margin: 10px;
 	width: 300px;
-	height: 500px;
 	float: left;
+	overflow: hidden;
 }
-#navigation ul {
+#navigationInner {
+	width: 620px;
+	overflow: hidden;
+	position: relative;
+}
+#navigation ul#naviLeft {
+	float: left;
+	margin: 0 0 0 10px;
+	width: 300px;
+}
+#navigation ul#naviLeft li {
+	margin: 8px 0;
+	padding: 8px 0 8px 10px;
+	border-bottom: 1px dotted #ddd;
+	cursor: pointer;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	position: relative;
+	font-size: 14px;
+	line-height: 14px;
+}
+#navigation ul#naviRight {
+	float: right;
+	width: 300px;
 	margin: 0 0 0 10px;
 }
-#navigation ul li {
+#navigation ul#naviRight li {
 	margin: 8px 0;
 	padding: 8px 0 8px 10px;
 	border-bottom: 1px dotted #ddd;
@@ -175,13 +199,25 @@ h1 {
 	display: none;
 	position: absolute;
 	top: 8px;
-	right: 8px;
+	left: 270px;
 }
 .navi-folder-btn {
 	display: none;
 	position: absolute;
 	top: 9px;
-	right: 25px;
+	left: 250px;
+}
+#navigation ul#naviRight li .delete-rss-btn {
+	left: 280px;
+}
+#navigation ul#naviRight li .navi-folder-btn {
+	left: 260px;
+}
+#navigation ul#naviRight li .navigationRight-back-btn {
+	text-align: right;
+	position: absolute;
+	top: 5px;
+	right: 10px;
 }
 .folderNavigation {
 	position: absolute;
