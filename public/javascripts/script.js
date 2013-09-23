@@ -1,15 +1,17 @@
 (function(){
 	google.load("feeds", "1");
 	$(function(){
-		var rssURL = '';
-		var nowEntry = {};
-		var items = [];
-		var favos = [];
-		var reads = [];
-		var readItems = [];
-		var nowFeed = '';
-		var entrieFlag = false;
-		var nowFeedPageURL = '';
+		var rssURL = '',
+			nowEntry = {},
+			items = [],
+			favos = [],
+			reads = [],
+			readItems = [],
+			nowFeed = '',
+			entrieFlag = false,
+			nowFeedPageURL = '',
+			folderNavigation = '',
+			selected = ''; // folderに入れるもの
 		
 		setNavigation();
 		addEvents();
@@ -23,18 +25,23 @@
 		}
 		
 		function addEvents() {
+			var folderNavigationHover = false;
 			$(window).resize(resizeHandler);
-			$(document).on('mouseover', '.items, #navigation ul li', function(){
+			$(document).on('mouseover', '.items, #navigation ul li', function(e){
+				if ($(this).find('div').hasClass('folderNavigation')) return;
 				$(this).css({'background-color': '#fff'});
 				if ($(this).parent().parent().attr('id')=='navigation') {
 					$(this).find('.delete-rss-btn').show()
+					$(this).find('.navi-folder-btn').show()
 				}
 			}).on('mouseout', '.items, #navigation ul li', function(){
 				$(this).css({'background-color': '#f3f3ea'})
 				if ($(this).parent().parent().attr('id')=='navigation') {
 					$(this).find('.delete-rss-btn').hide()
+					$(this).find('.navi-folder-btn').hide()
 				}
 			}).on('click', '#navigation ul li', function(e){
+				
 				var rss = $(this).attr('data-rss');
 				if (rss) {
 					rssURL = '';
@@ -47,7 +54,7 @@
 					}
 					feedLoader();
 				} else {
-					console.log('folder click');
+					//console.log('folder click');
 				}
 			}).on('click', '.delete-rss-btn', function(){
 				if ($(this).parent('li').attr('data-rss')) {
@@ -59,6 +66,29 @@
 					$(this).parent('li').hide();
 					return false;
 				}
+			}).on('mouseover', '.folderNavigation div p', function(){
+				$(this).css({'color': '#ce6040'});
+			}).on('mouseout', '.folderNavigation div p', function(){
+				$(this).css({'color': '#231712'});
+			})
+			// =======================================================
+			// folderNavigation
+			// =======================================================
+			.on('click', '.folderNavigation div p', function(e){
+				putInFolder($(e.target).text());
+				$('.folderNavigation').hide();
+			}).on('mouseenter', '.folderNavigation', function(e){
+				$('.folderNavigation').show();
+			}).on('mouseleave', '.folderNavigation', function(e){
+				$('.folderNavigation').hide();
+			}).on('click', '.navi-folder-btn', function(){
+				selected = $(this).parent('li').attr('data-rss');
+				$(document.body).append(folderNavigation);
+				$('.folderNavigation').css({
+					'top': $(this).offset().top - 5 + 'px',
+					'left': $(this).offset().left - 5 + 'px'
+				}).show();
+				return false;
 			}).on('click', '.items', function(){
 				var index = $('.items').index(this);
 				addEntrie(nowEntry.feed.entries[index].title, nowEntry.feed.entries[index].content);
@@ -100,15 +130,15 @@
 			}).on('click', '.favo-category', function(e){
 				if ($(e.target).hasClass('feed-title')) {
 					if ($(this).find('li').height()!==0) {
-						$(this).find('li').animate({'height': '0px'}, 200, 'swing', function(){$(this).hide();})
+						$(this).find('li').animate({'height': '0px'}, 200, 'swing', function(){$(this).hide();});
 					} else {
 						$(this).find('li').animate({'height': '23px'}, 300, 'swing').show();
 					}
 				}
 			}).on('mouseover', '.feed-title', function(){
-				$(this).css({'color': '#e25527'})
+				$(this).css({'color': '#e25527'});
 			}).on('mouseout', '.feed-title', function(){
-				$(this).css({'color': '#666'})
+				$(this).css({'color': '#666'});
 			});
 			$('#backBtn').on('click', removeArticle);
 			$('#add-btn').on('click', function(){
@@ -151,41 +181,21 @@
 			})
 		}
 		
-		function addFolder(name) {
-			var obj = new Object();
-			obj[name] = []
-			setItemStorage(obj);
-			setNavigation();
-			//$('#navigation').find('ul').append('<li data-folder="#">'+name+'<span class="delete-rss-btn"><img src="images/trashbox.png" /></span></li>');
-		}
-		
-		function addFolderOpen(elm, collback) {
-			elm.parent().animate({'width': 270+'px', 'height': 110+'px'}, 300, 'swing', function(){
-				$('#folder-name').fadeIn(500);
-				$('#add-folder-btn').fadeIn(500);
-				collback();
-			})
-		}
-		
-		function addFolderClose(elm, collback) {
-			$('#folder-name').fadeOut(100);
-			$('#add-folder-btn').fadeOut(100);
-			elm.parent().animate({'width': 100+'px', 'height': 30+'px'}, 300, 'swing', function(){
-				collback();
-			});
-		}
-		
-		function resizeHandler() {
-			if (entrieFlag) {
-				$('#articleBg').css({'width': $(window).width()+'px','height': $(document).height()+'px'});
-				$('#article').css({'left': $(window).width()/2-400+'px'})
+		function putInFolder(name) {
+			for (var i = 0; i < items.length; i++) {
+				if (typeof items[i]==='object') {
+					if (name===Object.keys(items[i]).toString()) {
+						var len = items[i][name].length;
+						for (var j = 0; j < len; j++) {
+							if (items[i][name][j]===selected) {
+								return false;
+							}
+						}
+						items[i][name].push(selected);
+						setItemStorage();
+					}
+				}
 			}
-		}
-		
-		function searchDomain(url) {
-			var domain = url.match(/^[httpsfile]+:\/{2,3}([0-9a-zA-Z\.\-:]+?):?[0-9]*?\//i)[1].split('.').join('');
-			nowFeed = domain;
-			return domain;
 		}
 		
 		function addFavo($elm) {
@@ -240,16 +250,6 @@
 			}
 		}
 		
-		function deleteFolder(folder) {
-			for (var i = 0; i < items.length; i++) {
-				if (typeof items[i]==='object') {
-					if ($(folder).attr('data-folder')===Object.keys(items[i]).toString()) {
-						items.splice(i, 1);
-						setItemStorage();
-					}
-				}
-			}
-		}
 		
 		function favoSort() {
 			favos.sort(
@@ -370,22 +370,6 @@
 			}
 		
 		}
-		function setFavi() {
-			var len = $('#navigation').find('li').length;
-			var $li = $('#navigation').find('li');
-			for (var i = 0; i < len; i++) {
-				var link = $li.eq(i).attr('data-rss');
-				if (link) {
-					$li.eq(i).css({
-						background: "url(http://g.etfv.co/" + link + ") 10px center no-repeat", "background-size": "16px 16px", "padding-left": "35px"
-					})
-				} else {
-					$li.eq(i).css({
-						background: "url(/images/folder.png) 10px center no-repeat", "background-size": "16px 16px", "padding-left": "35px", "color": "#ce6040"
-					})
-				}
-			}
-		}
 		
 		function setNavigation() {
 			items = JSON.parse(window.localStorage.getItem('items'));
@@ -396,20 +380,31 @@
 			}
 			for (var i = 0; i < items.length; i++) {
 				var contents = '';
+				var folderNames = [];
 				var n = 0;
 				naviLoader(items[i], function(url, title){
 					n++;
 					if (url===null) {
 						contents += '<li data-folder="'+title+'">'+title+'<span class="delete-rss-btn"><img src="images/trashbox.png" /></span></li>';
+						folderNames.push(title[0]);
 					} else {
-						contents += '<li data-rss="'+url+'">'+title+'<span class="delete-rss-btn"><img src="images/trashbox.png" /></span></li>';
+						contents += '<li data-rss="'+url+'">'+title+'<span class="navi-folder-btn"><img src="images/folder-icon.png" />'+
+									'</span><span class="delete-rss-btn"><img src="images/trashbox.png" /></span></li>';
 					}
 					if (n==items.length) {
 						start(contents);
+						buildFolderNavigation(folderNames)
 					}
 				});
 			}
-			
+		}
+		
+		function buildFolderNavigation(names) {
+			var p = '';
+			for (var i = 0; i < names.length; i++) {
+				p += '<p class="folderName">'+names[i]+'</p>'
+			}
+			folderNavigation = '<div class="folderNavigation"><p class="fn-tit">フォルダへ追加</p><div>'+p+'</div></div>'
 		}
 		
 		function start(contents) {
@@ -439,42 +434,6 @@
 			});
 		}
 		
-		function trimDate(d) {
-			var now = new Date(d)
-			,	y = now.getFullYear()
-			,	m = now.getMonth() + 1
-			,	d = now.getDate()
-			,	w = now.getDay()
-			,	week = ['日', '月', '火', '水', '木', '金', '土'];
-			if (m < 10) {
-			  m = '0' + m;
-			}
-			if (d < 10) {
-			  d = '0' + d;
-			}
-			return y + '年' + m + '月' + d + '日 (' + week[w] + ')';
-		}
-		
-		function setItemStorage(item) {
-			if (item)items.push(item);
-			window.localStorage.setItem('items', JSON.stringify(items));
-		}
-		
-		function setFavoStorage(favo) {
-			if (favo) {
-				var len = favos.length;
-				for (var i=0; i<len; i++) {
-					if (favos[i].link===favo.link) return false;
-				}
-				favos.push(favo);
-			}
-			window.localStorage.setItem('favos', JSON.stringify(favos));
-		}
-		
-		function setAlreadyRead() {
-			window.localStorage.setItem('reads', JSON.stringify(reads));
-		}
-		
 		function addRead(key, readUrl) {
 			var read = readUrl
 			var flag = false;
@@ -497,7 +456,130 @@
 				obj[key] = [read];
 				reads.push(obj)
 			};
-			setAlreadyRead();
+			setAllReadyRead();
+		}
+		
+		
+		
+		
+		
+		
+		// =============================================
+		// Resize Handler
+		// =============================================
+		function resizeHandler() {
+			if (entrieFlag) {
+				$('#articleBg').css({'width': $(window).width()+'px','height': $(document).height()+'px'});
+				$('#article').css({'left': $(window).width()/2-400+'px'})
+			}
+		}
+		
+		
+		// =============================================
+		// Folder
+		// =============================================
+		function addFolder(name) {
+			var obj = new Object();
+			obj[name] = []
+			setItemStorage(obj);
+			setNavigation();
+			//$('#navigation').find('ul').append('<li data-folder="#">'+name+'<span class="delete-rss-btn"><img src="images/trashbox.png" /></span></li>');
+		}
+		
+		function addFolderOpen(elm, collback) {
+			elm.parent().animate({'width': 270+'px', 'height': 110+'px'}, 300, 'swing', function(){
+				$('#folder-name').fadeIn(500);
+				$('#add-folder-btn').fadeIn(500);
+				collback();
+			})
+		}
+		
+		function addFolderClose(elm, collback) {
+			$('#folder-name').fadeOut(100);
+			$('#add-folder-btn').fadeOut(100);
+			elm.parent().animate({'width': 100+'px', 'height': 30+'px'}, 300, 'swing', function(){
+				collback();
+			});
+		}
+		
+		function deleteFolder(folder) {
+			for (var i = 0; i < items.length; i++) {
+				if (typeof items[i]==='object') {
+					if ($(folder).attr('data-folder')===Object.keys(items[i]).toString()) {
+						items.splice(i, 1);
+						setItemStorage();
+					}
+				}
+			}
+		}
+		
+		
+		
+		
+		// =============================================
+		// Favicon load
+		// =============================================
+		function setFavi() {
+			var len = $('#navigation').find('li').length;
+			var $li = $('#navigation').find('li');
+			for (var i = 0; i < len; i++) {
+				var link = $li.eq(i).attr('data-rss');
+				if (link) {
+					$li.eq(i).css({
+						background: "url(http://g.etfv.co/" + link + ") 10px center no-repeat", "background-size": "16px 16px", "padding-left": "35px"
+					})
+				} else {
+					$li.eq(i).css({
+						background: "url(/images/folder.png) 10px center no-repeat", "background-size": "16px 16px", "padding-left": "35px", "color": "#ce6040"
+					})
+				}
+			}
+		}
+		
+		
+		// =============================================
+		// Utiles
+		// =============================================
+		function searchDomain(url) {
+			var domain = url.match(/^[httpsfile]+:\/{2,3}([0-9a-zA-Z\.\-:]+?):?[0-9]*?\//i)[1].split('.').join('');
+			nowFeed = domain;
+			return domain;
+		}
+		
+		function setItemStorage(item) {
+			if (item)items.push(item);
+			window.localStorage.setItem('items', JSON.stringify(items));
+		}
+		
+		function setFavoStorage(favo) {
+			if (favo) {
+				var len = favos.length;
+				for (var i=0; i<len; i++) {
+					if (favos[i].link===favo.link) return false;
+				}
+				favos.push(favo);
+			}
+			window.localStorage.setItem('favos', JSON.stringify(favos));
+		}
+		
+		function setAllReadyRead() {
+			window.localStorage.setItem('reads', JSON.stringify(reads));
+		}
+		
+		function trimDate(d) {
+			var now = new Date(d)
+			,	y = now.getFullYear()
+			,	m = now.getMonth() + 1
+			,	d = now.getDate()
+			,	w = now.getDay()
+			,	week = ['日', '月', '火', '水', '木', '金', '土'];
+			if (m < 10) {
+			  m = '0' + m;
+			}
+			if (d < 10) {
+			  d = '0' + d;
+			}
+			return y + '年' + m + '月' + d + '日 (' + week[w] + ')';
 		}
 	})
 

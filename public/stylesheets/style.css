@@ -50,6 +50,7 @@ ul {
 	margin: 20px auto;
 	width: 1000px;
 	background-color: #f3f3ea;
+	position: relative;
 }
 #main {
 	margin: 0 0 0 15px;
@@ -175,6 +176,36 @@ h1 {
 	position: absolute;
 	top: 8px;
 	right: 8px;
+}
+.navi-folder-btn {
+	display: none;
+	position: absolute;
+	top: 9px;
+	right: 25px;
+}
+.folderNavigation {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 200px;
+	border: 1px solid #cccccc;
+	border-radius: 5px;
+	padding: 5px 10px 5px 10px;
+	background: #fff;
+	z-index: 100;
+	display: none;
+}
+.folderNavigation p.fn-tit {
+	font-weight: bold;
+	font-size: 13px;
+	border-bottom: 1px solid #eee;
+}
+.folderNavigation div p {
+	background: url(../images/folder-icon.png) no-repeat 0 3px;
+	padding: 3px 0 0 20px;
+	cursor: pointer;
+	border-bottom: 1px dotted #eee;
+	margin: 3px 0;
 }
 #article-title {
 	font-size: 26px;
