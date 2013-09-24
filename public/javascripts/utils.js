@@ -32,6 +32,7 @@ var Utils = (function(){
 		
 		
 		this.searchDomain = function(url){
+			if (url===undefined) return;
 			var domain = url.match(/^[httpsfile]+:\/{2,3}([0-9a-zA-Z\.\-:]+?):?[0-9]*?\//i)[1].split('.').join('');
 			nowFeed = domain;
 			return domain;

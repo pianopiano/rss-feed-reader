@@ -60,18 +60,19 @@
 					feedLoader();
 				} else {
 					setUpFolderInner($(this).attr('data-folder'));
-					navigationMove()
 				}
 			}).on('click', '#navigation ul#naviRight li .navigationRight-back-btn', function(){
 				navigationBack();
 			}).on('click', '.delete-rss-btn', function(){
 				if ($(this).parent('li').attr('data-rss')) {
-					deleteRss($(this).parent('li').attr('data-rss'));
-					$(this).parent('li').hide();
+					var li = $(this).parent('li')
+					deleteRss(li.attr('data-rss'), li.parent('ul').attr('id'));
+					li.hide();
 					return false;
 				} else {
-					deleteFolder($(this).parent('li'));
-					$(this).parent('li').hide();
+					var li = $(this).parent('li')
+					deleteFolder(li);
+					li.hide();
 					return false;
 				}
 			}).on('mouseover', '.folderNavigation div p', function(){
@@ -200,6 +201,8 @@
 		}
 		
 		function setNavigationRight(_items, _name) {
+			if (_items.length===0) return;
+			navigationMove()
 			for (var i = 0; i < _items.length; i++) {
 				var contents = '<li class="folder-inner-title">'+_name+'<span class="navi-folder-btn"></span><span class="navigationRight-back-btn">Back</span></li>';
 				var folderNames = [];
@@ -216,12 +219,11 @@
 		}
 		
 		function navigationMove() {
-			$('#navigationInner').animate({'left': '-320px'}, 300, 'swing')
-			$('#addFolder').hide()
+			$('#navigationInner, #addFolder, #set-rss').animate({'left': '-320px'}, 500, 'easeOutExpo');
 		}
 		function navigationBack() {
-			$('#navigationInner').animate({'left': '0px'}, 300, 'swing');
-			$('#addFolder').show()
+			$('#navigationInner, #addFolder, #set-rss').animate({'left': '0px'}, 500, 'easeOutExpo');
+			$('#navigation').find('ul#naviRight').empty();
 		}
 		
 		function putInFolder(name) {
@@ -284,11 +286,31 @@
 			entrieFlag = false;
 		}
 
-		function deleteRss(rss) {
-			for (var i = 0; i < items.length; i++) {
-				if (items[i]==rss) {
-					items.splice(i, 1);
-					utils.setItemStorage(null, items);
+		function deleteRss(rss, ul) {
+			if (ul==='naviLeft') {
+				for (var i = 0; i < items.length; i++) {
+					if (items[i]==rss) {
+						items.splice(i, 1);
+						utils.setItemStorage(null, items);
+					}
+				}
+			} else if (ul==='naviRight') {
+				var name = $('#naviRight').find('li').eq(0).text().split('Back')[0];
+				var len = items.length;
+				for (var i = 0; i < len; i++) {
+					if (typeof items[i]==='object') {
+						if (name===Object.keys(items[i]).toString()) {
+							var len = items[i][name].length;
+							for (var j = 0; j < len; j++) {
+								if (items[i][name][j]===rss) {
+									items[i][name].splice(j, 1);
+									utils.setItemStorage(null, items);
+									return false;
+								}
+							}
+							
+						}
+					}
 				}
 			}
 		}

@@ -360,6 +360,7 @@ ul.favo-category .feed-title {
 }
 
 #addFolder {
+	position: relative;
 	margin: 30px auto 0 auto;
 	text-align: center;
 	border: 1px solid #ce6040;
@@ -368,6 +369,10 @@ ul.favo-category .feed-title {
 	height: 30px;
 	line-height: 30px;
 	cursor: pointer;
+}
+
+#set-rss {
+	position: relative;
 }
 
 #addFolder p {
