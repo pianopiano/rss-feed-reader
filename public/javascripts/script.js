@@ -639,7 +639,7 @@
 					})
 				} else {
 					$li.eq(i).css({
-						background: "url(/images/folder.png) 10px center no-repeat",
+						background: "url(images/folder.png) 10px center no-repeat",
 						"background-size": "16px 16px",
 						"padding-left": "35px",
 						"color": "#ce6040"
