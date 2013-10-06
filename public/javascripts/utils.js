@@ -38,6 +38,14 @@ var Utils = (function(){
 			return domain;
 		}
 		
+		this.check2Byte = function(str) {
+			for (var i = 0; i < str.length; i++) {
+				var c = str.charCodeAt(i);
+				if ( !( (c >= 0x0 && c < 0x81) || (c == 0xf8f0) || (c >= 0xff61 && c < 0xffa0) || (c >= 0xf8f1 && c < 0xf8f4)) )
+			    	return true;
+				} 
+			return false; 
+		}
 		
 		this.trimDate = function(d) {
 			var now = new Date(d)

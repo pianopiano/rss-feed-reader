@@ -150,24 +150,12 @@ h1 {
 	margin: 0 0 0 10px;
 	width: 300px;
 }
-#navigation ul#naviLeft li {
-	margin: 8px 0;
-	padding: 8px 0 8px 10px;
-	border-bottom: 1px dotted #ddd;
-	cursor: pointer;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	position: relative;
-	font-size: 14px;
-	line-height: 14px;
-}
 #navigation ul#naviRight {
 	float: right;
-	width: 300px;
 	margin: 0 0 0 10px;
+	width: 300px;
 }
-#navigation ul#naviRight li {
+#navigation ul#naviLeft li, #navigation ul#naviRight li {
 	margin: 8px 0;
 	padding: 8px 0 8px 10px;
 	border-bottom: 1px dotted #ddd;
@@ -176,8 +164,15 @@ h1 {
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	position: relative;
-	font-size: 14px;
+	font-size: 13px;
 	line-height: 14px;
+}
+
+#navigation ul#naviLeft li p, #navigation ul#naviRight li p {
+	width: 220px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 #set-rss {
 	margin: 50px 0 50px 20px;
@@ -189,11 +184,19 @@ h1 {
 	margin: 5px 0;
 }
 #add-btn {
-	width: 265px;
+	width: 240px;
+	background: #c75e43;
+	border: #c75e43;
+	color: #FFFFFF;
+	font-size: 12px;
 }
 #fabutton {
 	margin: 20px 0 0 0;
-	width: 265px;
+	width: 240px;
+	background: #c75e43;
+	border: #c75e43;
+	color: #FFFFFF;
+	font-size: 12px;
 }
 .delete-rss-btn {
 	display: none;
@@ -388,5 +391,10 @@ ul.favo-category .feed-title {
 
 #addFolder #add-folder-btn {
 	display: none;
-	width: 230px;
+	margin: 0 auto;
+	width: 210px;
+	background: #c75e43;
+	border: #c75e43;
+	color: #FFFFFF;
+	font-size: 12px;
 }
